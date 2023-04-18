@@ -1,6 +1,10 @@
 import numpy as np
 import sqlite3
 import re
+import nltk
+from nltk.corpus import stopwords
+import string
+nltk.download('stopwords')
 
 # Cleaning spyder console 
 print("\014")
@@ -9,11 +13,22 @@ print("\014")
 maxCharacters = 3
 maxDecimals = 2
 
+stemmer = nltk.SnowballStemmer("english")
+stopword=set(stopwords.words('english'))
+
 # Removing all non-alpha characters from a text
 def cleanString(text):
-    text = re.sub(pattern='[^a-z\s]',repl=' ',string=text).split(' ')
-    text = [x for x in text if len(x)>maxCharacters]
+    text = str(text).lower()
+    text = re.sub('\[.*?\]', '', text)
+    text = re.sub('https?://\S+|www\.\S+', '', text)
+    text = re.sub('<.*?>+', '', text)
+    text = re.sub('[%s]' % re.escape(string.punctuation), '', text)
+    text = re.sub('\n', '', text)
+    text = re.sub('\w*\d\w*', '', text)
+    text = [word for word in text.split(' ') if word not in stopword]
+    text=" ".join(text)
     return text
+
 
 def wordsLearning():
     # Pending
