@@ -26,13 +26,16 @@ def cleanString(text):
     text = re.sub('\n', '', text)
     text = re.sub('\w*\d\w*', '', text)
     text = [word for word in text.split(' ') if word not in stopword]
-    text=" ".join(text)
     return text
-
+   
+def formatEmotions(emotions):
+    return [1 if i != 0 else 0 for i in emotions]
 
 def wordsLearning():
     # Pending
      return 0
+ 
+
     
 
 def emotionPercentages(emotions):
@@ -50,13 +53,15 @@ def emotionPercentages(emotions):
 def getEmotions(cursor, comment):
     
     words = cleanString(comment.lower())
+
     
     emotions = [0,0,0,0,0,0,0,0,0,0]
     newWords = []
     
     for word in words:
-        res = cursor.execute("SELECT * FROM EmotionLexicon WHERE WORD=?", (word,))
-        rows = res.fetchall()
+        
+        cursor.execute("SELECT * FROM EmotionLexicon WHERE WORD=?", (word,))
+        rows = cursor.fetchall()
         
         if (len(rows) == 0):
             newWords.append(word)
