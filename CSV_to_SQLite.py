@@ -42,6 +42,7 @@ with open('nrc_emotion_lexicon.csv' , 'r') as csvfile:
     connection=sqlite3.connect('db_Emotions.db')
     cursor=connection.cursor()
     #cursor.execute('DELETE FROM EmotionLexicon;',);
+    cursor.execute("DROP TABLE EmotionLexicon")
     cursor.execute(Table_Query)
     
     # Complete the query
@@ -62,12 +63,16 @@ with open('nrc_emotion_lexicon.csv' , 'r') as csvfile:
             Surprise = row[9]
             Trust = row[10]
         
-        cursor.execute('''CREATE TABLE EmotionLexicon (Word TEXT NOT NULL, Positive INT, Negative INT,Anger INT, Anticipation INT,Disgust INT,Fear INT,Joy INT,Sadness INT,Surprise INT,Trust INT);''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS EmotionLexicon (Word TEXT NOT NULL, Positive INT, Negative INT,Anger INT, Anticipation INT,Disgust INT,Fear INT,Joy INT,Sadness INT,Surprise INT,Trust INT);''')
         # Insert rows into the database
         InsertQuery=f"INSERT INTO EmotionLexicon VALUES ('{Word}','{Positive}','{Negative}','{Anger}','{Anticipation}','{Disgust}','{Fear}','{Joy}','{Sadness}', '{Surprise}','{Trust}')"
         cursor.execute(InsertQuery)
     
     
     connection.commit()
+    cursor.execute("SELECT * FROM EmotionLexicon")
+    results = cursor.fetchall()
+    print(results)
+
     connection.close()
     

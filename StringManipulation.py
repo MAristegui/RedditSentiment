@@ -6,17 +6,13 @@ from nltk.corpus import stopwords
 import string
 nltk.download('stopwords')
 
-# Cleaning spyder console 
-print("\014")
-
 # Constants
-maxCharacters = 3
 maxDecimals = 2
 
 stemmer = nltk.SnowballStemmer("english")
 stopword=set(stopwords.words('english'))
 
-# Removing all non-alpha characters from a text
+# Remove non-alphabetic characters from a text
 def cleanString(text):
     text = str(text).lower()
     text = re.sub('\[.*?\]', '', text)
@@ -27,39 +23,35 @@ def cleanString(text):
     text = re.sub('\w*\d\w*', '', text)
     text = [word for word in text.split(' ') if word not in stopword]
     return text
-   
+
+# Format emotions (for data collection)   
 def formatEmotions(emotions):
     return [1 if i != 0 else 0 for i in emotions]
 
+# Pending implementation
 def wordsLearning():
     # Pending
      return 0
  
-
-    
-
+# Calculate percentages of emotions
 def emotionPercentages(emotions):
-    
     total = sum(emotions)
-    toret = [0,0,0,0,0,0,0,0,0,0]
+    toRet = [0,0,0,0,0,0,0,0,0,0]
     
     if (total != 0):
         for x in range(len(emotions)):
-            toret[x] = (emotions[x]*100)/total
-        toret = np.round(toret,2)
+            toRet[x] = (emotions[x]*100)/total
+        toRet = np.round(toRet,maxDecimals)
     
-    return toret
-    
-def getEmotions(cursor, comment):
-    
-    words = cleanString(comment.lower())
+    return toRet
 
-    
+#Get the emotions associated with a comment    
+def getEmotions(cursor, comment):
+    words = cleanString(comment)
     emotions = [0,0,0,0,0,0,0,0,0,0]
     newWords = []
     
-    for word in words:
-        
+    for word in words:      
         cursor.execute("SELECT * FROM EmotionLexicon WHERE WORD=?", (word,))
         rows = cursor.fetchall()
         
@@ -67,7 +59,7 @@ def getEmotions(cursor, comment):
             newWords.append(word)
         else:
             for row in rows:
-                emotions = np.add(emotions,row[1::])
+                emotions = np.add(emotions,row[1:])
                   
     return emotions
     
